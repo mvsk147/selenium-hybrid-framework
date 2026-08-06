@@ -1,0 +1,18 @@
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# Test Artifacts
+screenshots/
+reports/
+
+# OS Files
+.DS_Store
+Thumbs.db

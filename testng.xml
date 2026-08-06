@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Framework Suite">
+
+    <listeners>
+        <listener class-name="com.sai.framework.listeners.TestListener" />
+    </listeners>
+
+    <test name="Smoke Tests">
+
+        <classes>
+            
+            <class name="com.sai.framework.tests.FrameworkSmokeTest" />
+            <class name="com.sai.framework.tests.LoginTest" />
+            
+        </classes>
+
+    </test>
+
+</suite>
