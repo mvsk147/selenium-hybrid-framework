@@ -4,11 +4,13 @@ import com.sai.framework.config.ConfigReader;
 import com.sai.framework.loggers.FrameworkLogger;
 import com.sai.framework.utils.HighlightUtils;
 import com.sai.framework.utils.WaitUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public abstract class BasePage {
 
@@ -28,6 +30,10 @@ public abstract class BasePage {
         this.explicitWait = ConfigReader.getExplicitWait();
     }
 
+    /*
+        helper method
+     */
+
     protected WebElement getVisibleElement(By locator){
 
         WebElement element = WaitUtils.waitForVisibility(driver, locator, explicitWait);
@@ -35,6 +41,10 @@ public abstract class BasePage {
 
         return element;
     }
+
+    /*
+        Mouse click methods
+     */
 
     protected void hover(By locator){
 
@@ -143,6 +153,10 @@ public abstract class BasePage {
 
     }
 
+    /*
+        Java Script executor methods
+     */
+
     protected void jsClick(By locator){
 
         try {
@@ -241,6 +255,10 @@ public abstract class BasePage {
     }
 
 
+    /*
+        wrapper methods
+     */
+
     protected void type(By locator, String text){
 
         try {
@@ -325,5 +343,408 @@ public abstract class BasePage {
             throw e;
         }
     }
+
+    /*
+        Dropdown / Select methods
+     */
+
+    private Select getSelect(By locator){
+
+        WebElement element = getVisibleElement(locator);
+
+        return new Select(element);
+    }
+
+    protected void selectByVisibleText(By locator, String text){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to select '"+text+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.selectByVisibleText(text);
+
+            FrameworkLogger.info(getClass(),"successfully selected '"+text+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to select '"+text+"' "+locator, e);
+            throw e;
+        }
+    }
+
+    protected void selectByValue(By locator, String value){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to select '"+value+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.selectByValue(value);
+
+            FrameworkLogger.info(getClass(),"successfully selected '"+value+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to select value '"+value+"' from "+locator, e);
+            throw e;
+        }
+    }
+
+    protected void selectByIndex(By locator, int index){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to select '"+index+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.selectByIndex(index);
+
+            FrameworkLogger.info(getClass(),"successfully selected '"+index+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to select index '"+index+"' from "+locator, e);
+            throw e;
+        }
+    }
+
+
+    /*
+
+     */
+
+    protected String getSelectedOption(By locator){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"Retrieving selected option from "+locator);
+
+            String selectedOption = getSelect(locator).getFirstSelectedOption().getText();
+
+            FrameworkLogger.info(getClass(),"successfully retrieved selected option from "+locator);
+
+            return selectedOption;
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"Failed to retrieve selected option from "+locator,e);
+            throw e;
+        }
+    }
+
+    protected List<String> getAllOptions(By locator){
+
+        try {
+
+            FrameworkLogger.info(getClass(), "Retrieving all dropdown options from " + locator);
+
+            List<String> options = new ArrayList<>();
+
+            for (WebElement element : getSelect(locator).getOptions()) {
+
+                options.add(element.getText());
+            }
+
+            FrameworkLogger.info(getClass(), "Retrieved " + options.size() + " options");
+
+            return options;
+        } catch (Exception e) {
+            FrameworkLogger.error(getClass(),"Failed to retrieve dropdown options from "+locator,e);
+            throw e;
+        }
+
+    }
+
+    protected boolean isMultiple(By locator){
+
+        try{
+
+            FrameworkLogger.info(getClass(), "attempting to check the multiple options at " + locator);
+
+            boolean status = getSelect(locator).isMultiple();
+
+            FrameworkLogger.info(getClass(), "Dropdown multiple selection status " + status);
+
+            return status;
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"Failed to check multiple options at "+locator,e);
+            throw e;
+        }
+    }
+
+    protected void deselectAll(By locator){
+        try{
+
+            FrameworkLogger.info(getClass(), "attempting to deselect all options in " + locator);
+
+            if(!isMultiple(locator)){
+                throw new UnsupportedOperationException("Dropdown is not a multi select: "+locator);
+            }
+
+            getSelect(locator).deselectAll();
+
+            FrameworkLogger.info(getClass(), "successfully deselected all options at " + locator);
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"Failed to deselect options at "+locator,e);
+            throw e;
+        }
+    }
+
+
+    protected void deselectByVisibleText(By locator, String text){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to deselect text '"+text+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.deselectByVisibleText(text);
+
+            FrameworkLogger.info(getClass(),"successfully deselected text '"+text+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to deselect text '"+text+"' "+locator, e);
+            throw e;
+        }
+    }
+
+    protected void deselectByValue(By locator, String value){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to deselect value '"+value+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.deselectByValue(value);
+
+            FrameworkLogger.info(getClass(),"successfully deselected value '"+value+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to deselect value '"+value+"' from "+locator, e);
+            throw e;
+        }
+    }
+
+    protected void deselectByIndex(By locator, int index){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to deselect index '"+index+"' from "+locator);
+
+            Select select = getSelect(locator);
+            select.deselectByIndex(index);
+
+            FrameworkLogger.info(getClass(),"successfully deselected index '"+index+"' from "+locator);
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to deselect index '"+index+"' from "+locator, e);
+            throw e;
+        }
+    }
+
+
+    /*
+        Alerts methods
+     */
+
+    private Alert getAlert(){
+
+        return driver.switchTo().alert();
+    }
+
+    protected void acceptAlert(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to accept the alert");
+
+            Alert alert = getAlert();
+            alert.accept();
+
+            FrameworkLogger.info(getClass(),"successfully accepted the alert");
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to accept the alert",e);
+            throw e;
+        }
+    }
+
+    protected void dismissAlert(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to dismiss the alert");
+
+            Alert alert = getAlert();
+            alert.dismiss();
+
+            FrameworkLogger.info(getClass(),"successfully dismissed the alert");
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to dismiss the alert",e);
+            throw e;
+        }
+    }
+
+    protected String getAlertText(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to retrieve the alert text");
+
+            Alert alert = getAlert();
+            String text = alert.getText();
+
+            FrameworkLogger.info(getClass(),"Alert text: "+text);
+
+            return text;
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the alert text",e);
+            throw e;
+        }
+    }
+
+    protected void sendKeysToAlert(String text){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to send the text to alert");
+
+            Alert alert = getAlert();
+            alert.sendKeys(text);
+
+            FrameworkLogger.info(getClass(),"successfully sent the text to alert");
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to send the text to alert",e);
+            throw e;
+        }
+
+    }
+
+    protected boolean isAlertPresent(){
+
+        try{
+
+            Alert alert = getAlert();
+
+            return true;
+
+        } catch (NoAlertPresentException e) {
+
+           return false;
+        }
+
+    }
+
+    /*
+        Window handles
+     */
+
+    private Set<String> getWindowHandles(){
+
+        return driver.getWindowHandles();
+
+    }
+
+    protected int getWindowCount(){
+
+        try {
+
+            FrameworkLogger.info(getClass(),"attempting to get window count");
+
+            int count = getWindowHandles().size();
+
+            FrameworkLogger.info(getClass(),"successfully retrieved the count: "+count);
+
+            return count;
+
+        } catch (Exception e) {
+            FrameworkLogger.error(getClass(),"failed to get the count",e);
+            throw e;
+        }
+    }
+
+    protected void closeCurrentWindow(){
+
+        try {
+
+            FrameworkLogger.info(getClass(),"trying to close the current window");
+
+            driver.close();
+
+            FrameworkLogger.info(getClass(),"successfully closed the current window");
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to close the current window",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToWindow(int index){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to window");
+
+            List<String> windows = new ArrayList<>(getWindowHandles());
+            driver.switchTo().window(windows.get(index));
+
+            FrameworkLogger.info(getClass(),"successfully switched to new window");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to new window ",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToWindow(String title){
+
+        boolean switched = false;
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to window");
+
+            for (String window : getWindowHandles()) {
+
+                driver.switchTo().window(window);
+                if (getPageTitle().equalsIgnoreCase(title)) {
+                    switched = true;
+                    break;
+                }
+            }
+
+            if(!switched){
+                throw new NoSuchWindowException("No window found with title: "+title);
+            }
+
+            FrameworkLogger.info(getClass(),"successfully switched to new window");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to new window ",e);
+            throw e;
+        }
+
+    }
+
+
+
+
+
+
 
 }
