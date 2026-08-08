@@ -22,12 +22,15 @@ public abstract class BasePage {
 
     protected final long explicitWait;
 
+    protected final String parentWindow;
+
     protected BasePage(WebDriver driver){
 
         this.driver = driver;
         this.actions = new Actions(driver);
         this.js = (JavascriptExecutor)driver;
         this.explicitWait = ConfigReader.getExplicitWait();
+        this.parentWindow = driver.getWindowHandle();
     }
 
     /*
@@ -739,6 +742,25 @@ public abstract class BasePage {
             throw e;
         }
 
+    }
+
+
+    protected void switchToParentWindow(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to parent window");
+
+            driver.switchTo().window(parentWindow);
+
+            FrameworkLogger.info(getClass(),"successfully switched to parent window");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to parent window ",e);
+            throw e;
+        }
     }
 
 
