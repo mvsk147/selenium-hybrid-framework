@@ -763,6 +763,109 @@ public abstract class BasePage {
         }
     }
 
+    /*
+        Frames handling
+     */
+
+    protected void switchToFrame(int index){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to frame at index: "+index);
+
+            driver.switchTo().frame(index);
+
+            FrameworkLogger.info(getClass(),"successfully switched to frame");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to frame ",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToFrame(String nameOrId){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to frame: "+nameOrId);
+
+            driver.switchTo().frame(nameOrId);
+
+            FrameworkLogger.info(getClass(),"successfully switched to frame");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to frame ",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToFrame(By locator){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to frame: "+locator);
+
+            WebElement frame = getVisibleElement(locator);
+
+            driver.switchTo().frame(frame);
+
+            FrameworkLogger.info(getClass(),"successfully switched to frame");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to frame ",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToParentFrame(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to parent frame");
+
+            driver.switchTo().parentFrame();
+
+            FrameworkLogger.info(getClass(),"successfully switched to parent frame");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to parent frame ",e);
+            throw e;
+        }
+
+    }
+
+    protected void switchToDefaultContent(){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to switch to default content");
+
+            driver.switchTo().defaultContent();
+
+            FrameworkLogger.info(getClass(),"successfully switched to default content");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to switch to default content ",e);
+            throw e;
+        }
+
+    }
+
+
+
 
 
 
