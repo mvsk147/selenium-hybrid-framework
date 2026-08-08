@@ -7,7 +7,10 @@ import com.sai.framework.utils.WaitUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -859,6 +862,75 @@ public abstract class BasePage {
         } catch (Exception e) {
 
             FrameworkLogger.error(getClass(),"failed to switch to default content ",e);
+            throw e;
+        }
+
+    }
+
+    /*
+        File handling
+     */
+
+    protected void uploadFile(By locator, String filePath){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to upload the file");
+
+            WebElement element = getVisibleElement(locator);
+
+            element.sendKeys(filePath);
+
+            FrameworkLogger.info(getClass(),"successfully uploaded the file");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to upload the file ",e);
+            throw e;
+        }
+
+    }
+
+    protected boolean isFileDownloaded(String fileName){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"checking whether file '"+fileName+"' is downloaded!");
+
+            String downloadPath = System.getProperty("user.home")+File.separator+"Downloads";
+
+            File file = new File(downloadPath,fileName);
+            boolean status = file.exists();
+
+            FrameworkLogger.info(getClass(),"file download status for '"+fileName+"': "+status);
+
+            return status;
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to check downloaded file '"+fileName+"'",e);
+            throw e;
+        }
+
+    }
+
+    protected void waitForFileDownload(String fileName) {
+
+        try{
+
+            FrameworkLogger.info(getClass(),"waiting for file '"+fileName+"' to be downloaded");
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(explicitWait));
+            wait.until(driver -> isFileDownloaded(fileName));
+
+            FrameworkLogger.info(getClass(),"file '"+fileName+"' downloaded successfully");
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to download file '"+fileName+"' within the expected time  ",e);
             throw e;
         }
 
