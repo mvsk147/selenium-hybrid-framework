@@ -937,10 +937,147 @@ public abstract class BasePage {
     }
 
 
+    /*
+        Web table handling
+     */
+
+    protected int getRowCount(By tableLocator){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to get row count");
+
+            WebElement table = getVisibleElement(tableLocator);
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
+
+            FrameworkLogger.info(getClass(), "row count retrieved successfully");
+            return rows.size();
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the row count",e);
+            throw e;
+        }
 
 
 
+    }
 
+
+    protected int getColumnCount(By tableLocator){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to get column count");
+
+            WebElement table = getVisibleElement(tableLocator);
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
+
+            WebElement firstRow = rows.getFirst();
+            List<WebElement> columns = firstRow.findElements(By.tagName("td"));
+
+
+            FrameworkLogger.info(getClass(), "column count retrieved successfully");
+            return columns.size();
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the column count",e);
+            throw e;
+        }
+
+
+
+    }
+
+
+    protected String getCellText(By tableLocator, int row, int column){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to get cell text");
+
+            WebElement table = getVisibleElement(tableLocator);
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
+
+            WebElement selectedRow = rows.get(row-1);
+            List<WebElement> columns = selectedRow.findElements(By.tagName("td"));
+
+            WebElement cell = columns.get(column-1);
+            String text = cell.getText();
+
+            FrameworkLogger.info(getClass(), "cell text retrieved successfully");
+            return text;
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the cell text",e);
+            throw e;
+        }
+
+
+    }
+
+
+    protected List<String> getRowData(By tableLocator, int row){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to get row data");
+
+            WebElement table = getVisibleElement(tableLocator);
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
+
+            WebElement selectedRow = rows.get(row-1);
+            List<WebElement> columns = selectedRow.findElements(By.tagName("td"));
+            List<String> rowData = new ArrayList<>();
+            for(WebElement element : columns){
+                rowData.add(element.getText());
+            }
+
+            FrameworkLogger.info(getClass(), "row data retrieved successfully");
+            return rowData;
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the row data",e);
+            throw e;
+        }
+
+    }
+
+    protected List<List<String>> getTableData(By tableLocator){
+
+        try{
+
+            FrameworkLogger.info(getClass(),"attempting to get table data");
+
+            WebElement table = getVisibleElement(tableLocator);
+            List<WebElement> rows = table.findElements(By.tagName("tr"));
+
+            List<List<String>> tableData = new ArrayList<>();
+
+            for (int i=1; i<= rows.size();i++){
+                List<String> rowData = getRowData(tableLocator,i);
+                tableData.add(rowData);
+            }
+
+
+            FrameworkLogger.info(getClass(), "table data retrieved successfully");
+            return tableData;
+
+
+        } catch (Exception e) {
+
+            FrameworkLogger.error(getClass(),"failed to retrieve the table data",e);
+            throw e;
+        }
+
+    }
 
 
 
