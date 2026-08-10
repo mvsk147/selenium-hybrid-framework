@@ -974,7 +974,7 @@ public abstract class BasePage {
             WebElement table = getVisibleElement(tableLocator);
             List<WebElement> rows = table.findElements(By.tagName("tr"));
 
-            WebElement firstRow = rows.getFirst();
+            WebElement firstRow = rows.get(0);
             List<WebElement> columns = firstRow.findElements(By.tagName("td"));
 
 
@@ -1076,6 +1076,45 @@ public abstract class BasePage {
             FrameworkLogger.error(getClass(),"failed to retrieve the table data",e);
             throw e;
         }
+
+    }
+
+    /*
+       Dynamic locators handling
+     */
+
+    protected By createXpath(String template, String value){
+
+
+            FrameworkLogger.info(getClass(),"creating dynamic xpath");
+
+            By locator = By.xpath(String.format(template,value));
+
+            return locator;
+
+    }
+
+
+    protected By createXpath(String template, String value1, String value2){
+
+
+        FrameworkLogger.info(getClass(),"creating dynamic xpath");
+
+        By locator = By.xpath(String.format(template,value1, value2));
+
+        return locator;
+
+    }
+
+
+    protected By createCssSelector(String template, String value){
+
+
+        FrameworkLogger.info(getClass(),"creating dynamic css selector");
+
+        By locator = By.cssSelector(String.format(template,value));
+
+        return locator;
 
     }
 

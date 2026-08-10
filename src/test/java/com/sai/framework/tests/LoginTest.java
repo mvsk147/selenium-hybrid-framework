@@ -16,6 +16,6 @@ public class LoginTest extends BaseTest {
 
         ProductsPage productsPage = loginPage.login(ConfigReader.getUsername(),ConfigReader.getPassword());
 
-        Assert.assertEquals(productsPage.getPageTitle(),"Products");
+        Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
     }
 }

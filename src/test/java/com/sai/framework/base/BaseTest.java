@@ -24,7 +24,7 @@ public class BaseTest {
         driver.get(ConfigReader.getUrl());
     }
 
-    @AfterMethod(alwaysRun = true)
+    @AfterMethod(alwaysRun = false)
     public void tearDown(){
         DriverFactory.quitDriver();
     }

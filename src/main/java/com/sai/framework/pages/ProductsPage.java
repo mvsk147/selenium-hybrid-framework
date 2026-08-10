@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 public class ProductsPage extends BasePage {
 
     private final By lblProductsTitle = By.xpath("//span[text()='Products']");
+    private static final String PRODUCT_NAME = "//div[@class='inventory_item_name ' and text()='%s']";
 
     public ProductsPage(WebDriver driver){
         super(driver);
@@ -14,5 +15,10 @@ public class ProductsPage extends BasePage {
 
     public String getPageTitle(){
         return getText(lblProductsTitle);
+    }
+
+    public boolean isProductDisplayed(String productName){
+        By productLocator = createXpath(PRODUCT_NAME, productName);
+        return isDisplayed(productLocator);
     }
 }
