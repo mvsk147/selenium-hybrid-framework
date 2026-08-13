@@ -262,7 +262,7 @@ public abstract class BasePage {
 
 
     /*
-        wrapper methods
+        element action methods
      */
 
     protected void type(By locator, String text){
