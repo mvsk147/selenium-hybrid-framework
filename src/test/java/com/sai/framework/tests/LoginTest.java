@@ -11,7 +11,20 @@ import org.testng.annotations.Test;
 public class LoginTest extends BaseTest {
 
     @Test(dataProvider = "loginData", dataProviderClass = TestDataProvider.class)
-    public void verifySuccessfulLogin(String username, String password){
+    public void verifySuccessfulLogin1(String username, String password){
+
+        LoginPage loginPage = new LoginPage(driver);
+
+//        ProductsPage productsPage = loginPage.login(ConfigReader.getUsername(),ConfigReader.getPassword());
+
+        ProductsPage productsPage = loginPage.login(username,password);
+
+        Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
+    }
+
+
+    @Test(dataProvider = "loginJsonData", dataProviderClass = TestDataProvider.class)
+    public void verifySuccessfulLogin2(String username, String password){
 
         LoginPage loginPage = new LoginPage(driver);
 

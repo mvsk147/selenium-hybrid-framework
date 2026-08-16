@@ -16,7 +16,7 @@ public class HighlightUtils {
         try {
 
             js.executeScript("arguments[0].setAttribute('style',arguments[1]);", element,originalStyle+
-                    "border: 3px solid red; background: yellow;");
+                    "border: 3px solid red;");
             Thread.sleep(200);
 
             js.executeScript("arguments[0].setAttribute('style',arguments[1]);",element,originalStyle);

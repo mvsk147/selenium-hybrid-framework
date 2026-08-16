@@ -6,11 +6,6 @@ import java.io.FileInputStream;
 
 public class ExcelUtils {
 
-    public static void main(String[] args) {
-        System.out.println(getCellData("src/main/resources/testdata/LoginData.xlsx","logindata",0,0));
-
-    }
-
     public static int getRowCount(String filePath, String sheetName){
 
         try(FileInputStream fis = new FileInputStream(filePath);
