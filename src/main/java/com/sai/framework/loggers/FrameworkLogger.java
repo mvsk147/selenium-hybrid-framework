@@ -19,7 +19,7 @@ public final class FrameworkLogger {
 
     public static void error(Class<?> clazz, String message, Throwable throwable){
 
-        getLogger(clazz).error(message);
+        getLogger(clazz).error(message,throwable);
     }
 
     public static void warn(Class<?> clazz, String message){
