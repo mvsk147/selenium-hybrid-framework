@@ -34,16 +34,16 @@ public final class ConfigReader {
         return Long.parseLong(properties.getProperty("pageLoadTimeout"));
     }
 
+    public static long getImplicitWait(){
+        return Long.parseLong(properties.getProperty("implicitWait"));
+    }
+
     public static long getExplicitWait(){
         return Long.parseLong(properties.getProperty("explicitWait"));
     }
 
-    public static String getUsername(){
-        return properties.getProperty("username");
-    }
-
-    public static String getPassword(){
-        return properties.getProperty("password");
+    public static boolean isHeadless(){
+        return Boolean.parseBoolean(properties.getProperty("headless"));
     }
 
 }

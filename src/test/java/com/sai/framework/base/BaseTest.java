@@ -20,11 +20,12 @@ public class BaseTest {
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigReader.getImplicitWait()));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(ConfigReader.getPageLoadTimeout()));
         driver.get(ConfigReader.getUrl());
     }
 
-    @AfterMethod(alwaysRun = false)
+    @AfterMethod(alwaysRun = true)
     public void tearDown(){
         DriverFactory.quitDriver();
     }

@@ -15,8 +15,6 @@ public class LoginTest extends BaseTest {
 
         LoginPage loginPage = new LoginPage(driver);
 
-//        ProductsPage productsPage = loginPage.login(ConfigReader.getUsername(),ConfigReader.getPassword());
-
         ProductsPage productsPage = loginPage.login(username,password);
 
         Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
@@ -27,8 +25,6 @@ public class LoginTest extends BaseTest {
     public void verifySuccessfulLogin2(String username, String password){
 
         LoginPage loginPage = new LoginPage(driver);
-
-//        ProductsPage productsPage = loginPage.login(ConfigReader.getUsername(),ConfigReader.getPassword());
 
         ProductsPage productsPage = loginPage.login(username,password);
 
