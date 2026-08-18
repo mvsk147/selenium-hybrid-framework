@@ -8,7 +8,7 @@ public class FrameworkSmokeTest extends BaseTest {
 
     @Test(enabled = false)
     public void verifyApplicationTitle(){
-        String actualTitle = driver.getTitle();
+        String actualTitle = getDriver().getTitle();
 
         Assert.assertEquals(actualTitle,"Swag Labs","Application title is incorrect.");
     }

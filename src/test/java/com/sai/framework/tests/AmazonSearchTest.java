@@ -10,9 +10,9 @@ public class AmazonSearchTest extends BaseTest {
 
     @Test
     public void verifyAmazonSearch(){
-        AmazonHomePage homePage = new AmazonHomePage(driver);
+        AmazonHomePage homePage = new AmazonHomePage(getDriver());
 
-        AmazonSearchResults resultsPage = new AmazonSearchResults(driver);
+        AmazonSearchResults resultsPage = new AmazonSearchResults(getDriver());
         homePage.search("hp laptops");
         resultsPage.clickProduct("OmniBook");
         Assert.assertTrue(resultsPage.isSearchResultsDisplayed());

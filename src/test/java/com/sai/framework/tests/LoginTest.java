@@ -13,7 +13,7 @@ public class LoginTest extends BaseTest {
     @Test(dataProvider = "loginData", dataProviderClass = TestDataProvider.class)
     public void verifySuccessfulLogin1(String username, String password){
 
-        LoginPage loginPage = new LoginPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
 
         ProductsPage productsPage = loginPage.login(username,password);
 
@@ -24,7 +24,7 @@ public class LoginTest extends BaseTest {
     @Test(dataProvider = "loginJsonData", dataProviderClass = TestDataProvider.class)
     public void verifySuccessfulLogin2(String username, String password){
 
-        LoginPage loginPage = new LoginPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
 
         ProductsPage productsPage = loginPage.login(username,password);
 
