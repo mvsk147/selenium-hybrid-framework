@@ -10,7 +10,54 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class TestListener implements ITestListener {
+
+    private static final Map<String, Integer> datasetIndexes = new ConcurrentHashMap<>();
+    private static final AtomicInteger datasetCounter = new AtomicInteger(0);
+    private static final Map<String, AtomicInteger> datasetCounters = new ConcurrentHashMap<>();
+    private static final Map<String, ExtentTest> extentTests = new ConcurrentHashMap<>();
+
+    private String createTestKey(ITestResult result){
+        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+        String testName = result.getMethod().getMethodName();
+        String parameters = Arrays.deepToString(result.getParameters());
+
+        return browser + "|" + testName + "|" + parameters;
+    }
+
+    private int getDatasetIndex(ITestResult result){
+
+        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+        String testName = result.getMethod().getMethodName();
+        String testKey = browser + "|" + testName;
+        String datasetKey = testKey + "|" + Arrays.deepToString(result.getParameters());
+
+        Integer existingIndex = datasetIndexes.get(datasetKey);
+
+        if(existingIndex != null){
+            return existingIndex;
+        }
+
+        AtomicInteger counter = datasetCounters.computeIfAbsent(testKey, key -> new AtomicInteger(0));
+
+        int newIndex = counter.incrementAndGet();
+        Integer previous = datasetIndexes.putIfAbsent(datasetKey, newIndex);
+
+        return previous != null ? previous : newIndex;
+
+    }
+
+    private void removeExtentTest(ITestResult result) {
+
+        String testKey = createTestKey(result);
+
+        extentTests.remove(testKey);
+    }
 
     @Override
     public void onStart(ITestContext context) {
@@ -21,41 +68,112 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
 
-        ExtentTestManager.setTest(ExtentManager.getInstance().createTest(result.getMethod().getMethodName()));
+        String testKey = createTestKey(result);
+        ExtentTest test = extentTests.computeIfAbsent(
+                testKey,
+                key -> {
+                    String testName = result.getMethod().getMethodName();
+                    int dataIndex = getDatasetIndex(result);
+
+                    String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+                    String reportName = browser+" | "+ testName+" | Dataset "+dataIndex;
+                    return ExtentManager.getInstance().createTest(reportName);
+
+                }
+
+        );
+
+        ExtentTestManager.setTest(test);
+
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
 
-        ExtentTestManager.getTest().log(Status.PASS,"Test Passed");
+        ExtentTest test = ExtentTestManager.getTest();
+
+        if(test != null){
+            test.log(Status.PASS, "Test Passed");
+        } else {
+            FrameworkLogger.warn(TestListener.class, "Extent test is not available for successful test: "+result.getMethod().getMethodName());
+        }
+
+        removeExtentTest(result);
+        ExtentTestManager.unload();
+
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
 
-        String screenshotPath = ScreenshotUtils.takeScreenshot(result.getMethod().getMethodName());
+        ExtentTest test = ExtentTestManager.getTest();
 
-        ExtentTestManager.getTest().fail(result.getThrowable());
-
-        try{
-
-            ExtentTestManager.getTest().addScreenCaptureFromPath(screenshotPath);
-        } catch (Exception e) {
-
-            FrameworkLogger.error(TestListener.class,"Unable to attach screenshot to Extent Report",e);
+        if (result.wasRetried()) {
+            return;
         }
+
+        if (test != null) {
+
+            test.fail(result.getThrowable());
+
+            String screenshotPath =
+                    ScreenshotUtils.takeScreenshot(
+                            result.getMethod().getMethodName()
+                    );
+
+            if (screenshotPath != null) {
+
+                try {
+                    test.addScreenCaptureFromPath(screenshotPath);
+
+                } catch (Exception e) {
+
+                    FrameworkLogger.error(
+                            TestListener.class,
+                            "Unable to attach screenshot to Extent Report",
+                            e
+                    );
+                }
+            }
+
+        } else {
+
+            FrameworkLogger.error(
+                    TestListener.class,
+                    "ExtentTest is not available for failed test: "
+                            + result.getMethod().getMethodName(),
+                    result.getThrowable()
+            );
+        }
+
+        removeExtentTest(result);
+        ExtentTestManager.unload();
     }
+
 
     @Override
     public void onTestSkipped(ITestResult result) {
 
-        ExtentTestManager.getTest().log(Status.SKIP,"Test Skipped");
+        if(result.wasRetried()){
+            return;
+        }
+
+        ExtentTest test = ExtentTestManager.getTest();
+
+        if(test != null){
+            test.skip("Test Skipped");
+        }
+
+        removeExtentTest(result);
+        ExtentTestManager.unload();
+
+
     }
 
     @Override
     public void onFinish(ITestContext context) {
 
         ExtentManager.getInstance().flush();
-        ExtentTestManager.unload();
+
     }
 }

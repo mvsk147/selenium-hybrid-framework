@@ -3,14 +3,19 @@ package com.sai.framework.tests;
 import com.sai.framework.base.BaseTest;
 import com.sai.framework.config.ConfigReader;
 import com.sai.framework.dataproviders.TestDataProvider;
+import com.sai.framework.listeners.RetryAnalyzer;
 import com.sai.framework.pages.LoginPage;
 import com.sai.framework.pages.ProductsPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class LoginTest extends BaseTest {
 
-    @Test(dataProvider = "loginData", dataProviderClass = TestDataProvider.class)
+
+    @Test(groups = {"smoke"}, dataProvider = "loginData", dataProviderClass = TestDataProvider.class, retryAnalyzer = RetryAnalyzer.class)
     public void verifySuccessfulLogin1(String username, String password){
 
         LoginPage loginPage = new LoginPage(getDriver());
@@ -18,6 +23,7 @@ public class LoginTest extends BaseTest {
         ProductsPage productsPage = loginPage.login(username,password);
 
         Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
+
     }
 
 

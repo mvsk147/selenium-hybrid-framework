@@ -34,6 +34,12 @@ public final class DriverFactory {
                 options.setExperimentalOption("prefs", prefs);
 
                 driver.set(new ChromeDriver(options));
+                System.out.println(
+                        "DRIVER CREATED | Thread: "
+                                + Thread.currentThread().threadId()
+                                + " | Driver: "
+                                + driver.get()
+                );
                 break;
             case "firefox":
                 driver.set(new FirefoxDriver());

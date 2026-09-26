@@ -2,6 +2,7 @@ package com.sai.framework.utils;
 
 import com.sai.framework.base.BasePage;
 import com.sai.framework.driver.DriverFactory;
+import com.sai.framework.loggers.FrameworkLogger;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -17,7 +18,14 @@ public final class ScreenshotUtils {
     private ScreenshotUtils(){}
 
     public static String takeScreenshot(String screenshotName){
-        WebDriver driver = DriverFactory.getDriver();
+        WebDriver driver;
+
+        try{
+            driver = DriverFactory.getDriver();
+        } catch (IllegalStateException e) {
+            FrameworkLogger.warn(ScreenshotUtils.class,"Unable to capture screenshot because webdriver is not initialized.");
+            return null;
+        }
         File source = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
