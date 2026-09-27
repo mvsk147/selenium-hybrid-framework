@@ -11,7 +11,7 @@ logs/
 
 # Test Artifacts
 screenshots/
-reports/
+/reports/
 
 # OS Files
 .DS_Store
