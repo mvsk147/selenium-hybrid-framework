@@ -5,7 +5,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +45,12 @@ public final class DriverFactory {
                 );
                 break;
             case "firefox":
-                driver.set(new FirefoxDriver());
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+
+                GeckoDriverService service = new GeckoDriverService.Builder()
+                        .withLogFile(new File("geckodriver.log"))
+                        .build();
+                driver.set(new FirefoxDriver(service, firefoxOptions));
                 break;
             case "edge":
                 driver.set(new EdgeDriver());
