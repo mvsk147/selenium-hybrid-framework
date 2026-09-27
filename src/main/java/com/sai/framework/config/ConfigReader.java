@@ -47,7 +47,15 @@ public final class ConfigReader {
     }
 
     public static String getBrowser(){
-        return properties.getProperty("browser");
+
+        String browser = System.getProperty("browser");
+
+        if(browser == null || browser.isBlank()){
+            return properties.getProperty("browser");
+        }
+
+        return browser;
+
     }
 
     public static String getUrl(){

@@ -14,17 +14,16 @@ import java.time.Duration;
 public class BaseTest {
 
      protected WebDriver getDriver(){
+
          return DriverFactory.getDriver();
      }
 
     @BeforeMethod(alwaysRun = true)
-    @Parameters("browser")
-    public void setUp(String browser){
+    public void setUp(){
 
         System.out.println("==========SETUP STARTED===========");
 
-//        DriverFactory.initializeDriver(ConfigReader.getBrowser());
-        DriverFactory.initializeDriver(browser);
+        DriverFactory.initializeDriver(ConfigReader.getBrowser());
         System.out.println(
                 "DRIVER BEFORE TEST | Thread: "
                         + Thread.currentThread().threadId()
@@ -52,5 +51,6 @@ public class BaseTest {
                 +" | Test: "+getClass().getSimpleName());
 
         DriverFactory.quitDriver();
+        System.out.println("==========Execution Ended===========");
     }
 }
