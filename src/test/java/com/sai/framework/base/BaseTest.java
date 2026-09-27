@@ -3,6 +3,7 @@ package com.sai.framework.base;
 import com.sai.framework.config.ConfigReader;
 import com.sai.framework.driver.DriverFactory;
 import com.sai.framework.loggers.FrameworkLogger;
+import org.apache.commons.math3.special.BesselJ;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -34,6 +35,8 @@ public class BaseTest {
 
         FrameworkLogger.info(getClass(),"Thread: "+Thread.currentThread().threadId()
                 +" | Driver: "+driver+" | Test: "+getClass().getSimpleName());
+
+        FrameworkLogger.info(BaseTest.class,"Environment: "+ConfigReader.getEnvironment());
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();

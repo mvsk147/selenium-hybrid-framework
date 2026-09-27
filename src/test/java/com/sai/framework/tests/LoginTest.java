@@ -1,7 +1,7 @@
 package com.sai.framework.tests;
 
 import com.sai.framework.base.BaseTest;
-import com.sai.framework.config.ConfigReader;
+import com.sai.framework.config.CredentialManager;
 import com.sai.framework.dataproviders.TestDataProvider;
 import com.sai.framework.listeners.RetryAnalyzer;
 import com.sai.framework.pages.LoginPage;
@@ -9,8 +9,6 @@ import com.sai.framework.pages.ProductsPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginTest extends BaseTest {
 
@@ -24,6 +22,18 @@ public class LoginTest extends BaseTest {
 
         Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
 
+    }
+
+    @Test(groups = {"smoke"}, retryAnalyzer = RetryAnalyzer.class)
+    public void verifyLoginWithSecureCredentials(){
+        String username = CredentialManager.getUsername();
+        String password = CredentialManager.getPassword();
+
+        LoginPage loginPage = new LoginPage(getDriver());
+
+        ProductsPage productsPage = loginPage.login(username,password);
+
+        Assert.assertTrue(productsPage.isProductDisplayed("Sauce Labs Backpack"));
     }
 
 
