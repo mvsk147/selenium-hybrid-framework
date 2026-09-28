@@ -17,10 +17,7 @@ public final class DriverFactory {
 
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    private DriverFactory() {
-
-    }
-
+    private DriverFactory() {}
 
     public static void initializeDriver(String browser) {
         if (browser == null || browser.isBlank())
@@ -54,7 +51,7 @@ public final class DriverFactory {
                         .withLogFile(logFile)
                         .withLogLevel(FirefoxDriverLogLevel.DEBUG)
                         .build();
-                driver.set(new FirefoxDriver(service, firefoxOptions));
+                driver.set(new FirefoxDriver(service));
                 break;
             case "edge":
                 driver.set(new EdgeDriver());
