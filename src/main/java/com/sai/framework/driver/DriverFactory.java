@@ -45,13 +45,11 @@ public final class DriverFactory {
             case "firefox":
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
 
-                File logFile = new File(System.getProperty("user.dir"), "geckodriver.log");
+                firefoxOptions.setBinary(
+                        "C:\\Users\\sai_jenkins\\.cache\\selenium\\firefox\\win64\\156.0.1\\firefox.exe"
+                );
 
-                GeckoDriverService service = new GeckoDriverService.Builder()
-                        .withLogFile(logFile)
-                        .withLogLevel(FirefoxDriverLogLevel.DEBUG)
-                        .build();
-                driver.set(new FirefoxDriver(service));
+                driver.set(new FirefoxDriver(firefoxOptions));
                 break;
             case "edge":
                 driver.set(new EdgeDriver());
