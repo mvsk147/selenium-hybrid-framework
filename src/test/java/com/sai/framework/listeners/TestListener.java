@@ -2,6 +2,8 @@ package com.sai.framework.listeners;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import com.sai.framework.config.ConfigReader;
+import com.sai.framework.config.ReportConfig;
 import com.sai.framework.loggers.FrameworkLogger;
 import com.sai.framework.reports.ExtentManager;
 import com.sai.framework.reports.ExtentTestManager;
@@ -23,7 +25,8 @@ public class TestListener implements ITestListener {
     private static final Map<String, ExtentTest> extentTests = new ConcurrentHashMap<>();
 
     private String createTestKey(ITestResult result){
-        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+//        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+        String browser = ConfigReader.getBrowser();
         String testName = result.getMethod().getMethodName();
         String parameters = Arrays.deepToString(result.getParameters());
 
@@ -32,7 +35,8 @@ public class TestListener implements ITestListener {
 
     private int getDatasetIndex(ITestResult result){
 
-        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+//        String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+        String browser = ConfigReader.getBrowser();
         String testName = result.getMethod().getMethodName();
         String testKey = browser + "|" + testName;
         String datasetKey = testKey + "|" + Arrays.deepToString(result.getParameters());
@@ -62,11 +66,18 @@ public class TestListener implements ITestListener {
     @Override
     public void onStart(ITestContext context) {
 
-        ExtentManager.getInstance();
+        if(ReportConfig.isHtmlEnabled()) {
+
+            ExtentManager.getInstance();
+        }
     }
 
     @Override
     public void onTestStart(ITestResult result) {
+
+        if(!ReportConfig.isHtmlEnabled()){
+            return;
+        }
 
         String testKey = createTestKey(result);
         ExtentTest test = extentTests.computeIfAbsent(
@@ -75,7 +86,8 @@ public class TestListener implements ITestListener {
                     String testName = result.getMethod().getMethodName();
                     int dataIndex = getDatasetIndex(result);
 
-                    String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+//                    String browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+                    String browser = ConfigReader.getBrowser();
                     String reportName = browser+" | "+ testName+" | Dataset "+dataIndex;
                     return ExtentManager.getInstance().createTest(reportName);
 
@@ -90,10 +102,23 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
 
+        if(!ReportConfig.isHtmlEnabled()){
+            return;
+        }
+
         ExtentTest test = ExtentTestManager.getTest();
 
         if(test != null){
             test.log(Status.PASS, "Test Passed");
+
+            String screenshotPath = ScreenshotUtils.takeScreenshot(result.getMethod().getMethodName());
+            if(screenshotPath != null){
+                try{
+                    test.addScreenCaptureFromPath(screenshotPath);
+                } catch (Exception e){
+                    FrameworkLogger.error(TestListener.class,"Unable to attach successful test screenshot to extent report",e);
+                }
+            }
         } else {
             FrameworkLogger.warn(TestListener.class, "Extent test is not available for successful test: "+result.getMethod().getMethodName());
         }
@@ -106,11 +131,15 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
 
-        ExtentTest test = ExtentTestManager.getTest();
+        if(!ReportConfig.isHtmlEnabled()){
+            return;
+        }
 
         if (result.wasRetried()) {
             return;
         }
+
+        ExtentTest test = ExtentTestManager.getTest();
 
         if (test != null) {
 
@@ -154,6 +183,10 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSkipped(ITestResult result) {
 
+        if(!ReportConfig.isHtmlEnabled()){
+            return;
+        }
+
         if(result.wasRetried()){
             return;
         }
@@ -173,7 +206,10 @@ public class TestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
 
-        ExtentManager.getInstance().flush();
+        if(ReportConfig.isHtmlEnabled()) {
+
+            ExtentManager.getInstance().flush();
+        }
 
     }
 }
