@@ -43,6 +43,7 @@ public final class DriverFactory {
                 );
                 break;
             case "firefox":
+                System.out.println("In the firefox block..");
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
 
                 firefoxOptions.setBinary(
