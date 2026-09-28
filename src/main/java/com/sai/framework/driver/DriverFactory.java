@@ -5,6 +5,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.GeckoDriverService;
 
@@ -47,8 +48,11 @@ public final class DriverFactory {
             case "firefox":
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
 
+                File logFile = new File(System.getProperty("user.dir"), "geckodriver.log");
+
                 GeckoDriverService service = new GeckoDriverService.Builder()
-                        .withLogFile(new File("geckodriver.log"))
+                        .withLogFile(logFile)
+                        .withLogLevel(FirefoxDriverLogLevel.DEBUG)
                         .build();
                 driver.set(new FirefoxDriver(service, firefoxOptions));
                 break;
